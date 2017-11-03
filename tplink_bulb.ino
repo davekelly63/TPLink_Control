@@ -22,6 +22,24 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
+  // if there's data available, read a packet
+  int packetSize = udp.parsePacket();
+
+  if (packetSize > 0)
+  {
+    if (udp.remotePort() == 9999)
+    {
+      // it is from the bulb
+
+      char packetBuffer [250];
+      int length = udp.read(packetBuffer, 250);
+      if (length > 0)
+      {
+        Serial.println ("Data received from bulb");
+        // Now decrypt it
+      }
+    }
+  }
 }
 
 
@@ -70,15 +88,25 @@ void SendCommand (const char * command [])
 
   // Test dump
 
-  for (unsigned int index = 0; index < messageLength; index++)
+  /*for (unsigned int index = 0; index < messageLength; index++)
   {
     Serial.print(cmdMessage[index], HEX);
     Serial.print (" ");
   }
 
   Serial.println();
-  Serial.println("Finished");
+  Serial.println("Finished");*/
 
+  // Now send it over UDP
+
+  //udp.begin ();
+  udp.beginPacket("192.168.1.45", 9999);
+  udp.write(cmdMessage);
+  udp.endPacket();
+
+  // The light bulb should reply now
+  // This is handled in the main loop
+  
 }
 
 void EncryptMessage (char * message)

@@ -45,12 +45,12 @@ void ConnectWifi()
 
   PrintWifiStatus ();*/
 
-  SendOnCommand ();
+  SendCommand (onCommand);
   
 }//end connect
 
 
-void SendOnCommand (void)
+void SendCommand (const char * command [])
 {
   Serial.println("Encrypting...");
   // First copy the command locally
@@ -59,7 +59,7 @@ void SendOnCommand (void)
   
   Serial.println("Reading");
 
-  strcpy((char *)&cmdMessage, *onCommand);
+  strcpy((char *)&cmdMessage, (const char *) * command);
   unsigned int messageLength = strlen(cmdMessage);
 
   Serial.println(cmdMessage);

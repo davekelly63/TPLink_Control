@@ -63,19 +63,19 @@ void ConnectWifi()
 
   PrintWifiStatus ();
 
-  SendCommand (onCommand);
+  SendCommand (offCommand);
   
 }//end connect
 
 
 void SendCommand (const char * command [])
 {
-  Serial.println("Encrypting...");
+  //Serial.println("Encrypting...");
   // First copy the command locally
 
   char cmdMessage [250];
   
-  Serial.println("Reading");
+  //Serial.println("Reading");
 
   strcpy((char *)&cmdMessage, (const char *) * command);
   unsigned int messageLength = strlen(cmdMessage);
@@ -83,7 +83,7 @@ void SendCommand (const char * command [])
   Serial.println(cmdMessage);
   Serial.println("Length" + messageLength);
       
-  Serial.println("Ready to encrypt");
+  //Serial.println("Ready to encrypt");
   EncryptMessage ((char *) &cmdMessage);
 
   // Test dump
@@ -143,12 +143,3 @@ void PrintWifiStatus()
   Serial.println(" dBm");
 }
 
-void SendTPLinkCommand (unsigned char *message)
-{
-  WiFiClient http;
-  if (http.connect("192.168.1.45", 9999))     // Static IP
-  {
-    Serial.println("WiFi Client connected ");
-    
-  }
-}

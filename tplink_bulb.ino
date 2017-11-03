@@ -50,7 +50,7 @@ void ConnectWifi()
   WiFi.mode(WIFI_STA);
   Serial.print("Connecting to "+*MY_SSID);
   
-  /*WiFi.begin(MY_SSID, MY_PWD);
+  WiFi.begin(MY_SSID, MY_PWD);
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(1000);
@@ -61,7 +61,7 @@ void ConnectWifi()
   Serial.print("Connected ");
   Serial.println("");  
 
-  PrintWifiStatus ();*/
+  PrintWifiStatus ();
 
   SendCommand (onCommand);
   
@@ -134,6 +134,8 @@ void PrintWifiStatus()
   Serial.print("IP Address: ");
   Serial.println(ip);
 
+  Serial.print("MAC Address ");
+  Serial.println(WiFi.macAddress());
   // print the received signal strength:
   long rssi = WiFi.RSSI();
   Serial.print("signal strength (RSSI):");

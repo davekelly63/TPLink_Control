@@ -116,7 +116,7 @@ void PrintWifiStatus()
 void SendTPLinkCommand (unsigned char *message)
 {
   WiFiClient http;
-  if (http.connect("192.168.1.45", 9999))
+  if (http.connect("192.168.1.45", 9999))     // Static IP
   {
     Serial.println("WiFi Client connected ");
     

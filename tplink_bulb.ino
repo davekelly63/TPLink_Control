@@ -122,4 +122,3 @@ void SendTPLinkCommand (unsigned char *message)
     
   }
 }
-

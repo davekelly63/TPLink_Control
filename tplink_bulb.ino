@@ -1,10 +1,11 @@
 
-
+#include <stdbool.h>
+#include <stdint.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
 // WEB Information
-const char* MY_SSID = "TALKTALK531F4C"; 
+const char* MY_SSID = "TALKTALK531F4C";
 const char* MY_PWD =  "parsimonious";
 
 const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0, \"brightness\": 25}}}"};
@@ -23,7 +24,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   // if there's data available, read a packet
-  int packetSize = udp.parsePacket();
+  uint16_t packetSize = udp.parsePacket();
 
   if (packetSize > 0)
   {
@@ -31,8 +32,8 @@ void loop() {
     {
       // it is from the bulb
 
-      char packetBuffer [250];
-      int length = udp.read(packetBuffer, 250);
+      uint8_t packetBuffer [250];
+      uint16_t length = udp.read(packetBuffer, sizeof(packetBuffer));
       if (length > 0)
       {
         Serial.println ("Data received from bulb");
@@ -48,23 +49,23 @@ void ConnectWifi()
   Serial.println();
   Serial.println("Set to STA mode");
   WiFi.mode(WIFI_STA);
-  Serial.print("Connecting to "+*MY_SSID);
-  
+  Serial.print("Connecting to " + *MY_SSID);
+
   WiFi.begin(MY_SSID, MY_PWD);
-  while (WiFi.status() != WL_CONNECTED) 
+  while (WiFi.status() != WL_CONNECTED)
   {
     delay(1000);
     Serial.print(".");
   }
-  
+
   Serial.println("");
   Serial.print("Connected ");
-  Serial.println("");  
+  Serial.println("");
 
   PrintWifiStatus ();
 
   SendCommand (offCommand);
-  
+
 }//end connect
 
 
@@ -74,28 +75,17 @@ void SendCommand (const char * command [])
   // First copy the command locally
 
   char cmdMessage [250];
-  
+
   //Serial.println("Reading");
 
   strcpy((char *)&cmdMessage, (const char *) * command);
-  unsigned int messageLength = strlen(cmdMessage);
+  uint8_t messageLength = strlen(cmdMessage);
 
   Serial.println(cmdMessage);
   Serial.println("Length" + messageLength);
-      
+
   //Serial.println("Ready to encrypt");
-  EncryptMessage ((char *) &cmdMessage);
-
-  // Test dump
-
-  /*for (unsigned int index = 0; index < messageLength; index++)
-  {
-    Serial.print(cmdMessage[index], HEX);
-    Serial.print (" ");
-  }
-
-  Serial.println();
-  Serial.println("Finished");*/
+  EncryptMessage ((uint8_t *) &cmdMessage);
 
   // Now send it over UDP
 
@@ -106,16 +96,16 @@ void SendCommand (const char * command [])
 
   // The light bulb should reply now
   // This is handled in the main loop
-  
+
 }
 
-void EncryptMessage (char * message)
+void EncryptMessage (uint8_t * message)
 {
-  unsigned int qkey = 0xAB;
-    
+  uint8_t qkey = 0xAB;
+
   while (*message)
   {
-    unsigned char a = *message ^ qkey;
+    uint8_t a = *message ^ qkey;
     qkey = a;
 
     *message = a;      // Stick it back in the array
@@ -123,7 +113,7 @@ void EncryptMessage (char * message)
   }
 }
 
-void PrintWifiStatus() 
+void PrintWifiStatus()
 {
   // print the SSID of the network you're attached to:
   Serial.print("SSID: ");

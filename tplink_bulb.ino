@@ -41,6 +41,26 @@ void loop() {
       }
     }
   }
+
+  if (Serial.available() > 0)
+  {
+    // read the incoming byte:
+    uint8_t incomingByte = Serial.read();
+
+    switch (incomingByte)
+    {
+      case 'n':
+         SendCommand (onCommand);
+         break;
+
+      case 'f':
+        SendCommand (offCommand);
+        break;
+
+      default:
+        break;
+    }
+  }
 }
 
 

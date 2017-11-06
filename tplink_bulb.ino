@@ -33,12 +33,15 @@ void loop()
 
   if (packetSize > 0)
   {
+    Serial.println ("Data available from " + udp.remotePort());
+    
     if (udp.remotePort() == 9999)
     {
+      Serial.println ("Data available");
       // it is from the bulb
 
       uint8_t packetBuffer [250];
-      uint16_t length = udp.read(packetBuffer, sizeof(packetBuffer));
+      uint16_t length = udp.read (packetBuffer, sizeof(packetBuffer));
       if (length > 0)
       {
         Serial.println ("Data received from bulb");
@@ -85,7 +88,7 @@ void ConnectWifi()
   WiFi.begin(MY_SSID, MY_PWD);
   while (WiFi.status() != WL_CONNECTED)
   {
-    delay(1000);
+    delay(100);
     Serial.print(".");
   }
 
@@ -116,8 +119,8 @@ void SendCommand (const char * command [])
   strcpy((char *)&cmdMessage, (const char *) * command);
   uint8_t messageLength = strlen(cmdMessage);
 
-  Serial.println(cmdMessage);
-  Serial.println("Length" + messageLength);
+  //Serial.println(cmdMessage);
+  //Serial.println("Length" + messageLength);
 
   //Serial.println("Ready to encrypt");
   EncryptMessage ((uint8_t *) &cmdMessage);

@@ -10,16 +10,19 @@ const char* MY_PWD =  "parsimonious";
 
 //const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0, \"brightness\": 25}}}"};
 const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0}}}"};
-const char * offCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 0, \"transition_period\": 5}}}"};
+const char * offCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 0, \"transition_period\": 0}}}"};
 
 WiFiUDP udp;
 
 void setup() 
 {
+
   // put your setup code here, to run once:
   Serial.begin (115200);
   ConnectWifi();
 }
+
+void(* resetFunc) (void) = 0;//declare reset function at address 0
 
 void loop() 
 {
@@ -59,6 +62,10 @@ void loop()
         SendCommand (offCommand);
         break;
 
+      case 'r':
+        resetFunc ();
+        break;
+        
       default:
         break;
     }

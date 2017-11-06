@@ -14,14 +14,15 @@ const char * offCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"
 
 WiFiUDP udp;
 
-void setup() {
-
+void setup() 
+{
   // put your setup code here, to run once:
   Serial.begin (115200);
   ConnectWifi();
 }
 
-void loop() {
+void loop() 
+{
   // put your main code here, to run repeatedly:
 
   // if there's data available, read a packet
@@ -67,6 +68,8 @@ void loop() {
 
 void ConnectWifi()
 {
+  uint32_t startTime = millis ();
+  
   Serial.println();
   Serial.println("Set to STA mode");
   WiFi.mode(WIFI_STA);
@@ -83,6 +86,10 @@ void ConnectWifi()
   Serial.print("Connected ");
   Serial.println("");
 
+  Serial.print ("Time to connect to network ");
+  Serial.print ((millis() - startTime), DEC);
+  Serial.println (" ms");
+  
   PrintWifiStatus ();
 
   SendCommand (offCommand);

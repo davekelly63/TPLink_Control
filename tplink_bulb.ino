@@ -45,21 +45,26 @@ void loop()
   // if there's data available, read a packet
   uint16_t packetSize = udp.parsePacket();
 
+  packetSize = udp.available ();
+  
   if (packetSize > 0)
   {
     Serial.println ("Data available from " + udp.remotePort());
     
     if (udp.remotePort() == 9999)
     {
-      Serial.println ("Data available");
+      Serial.println ("Data available. Bang");
       // it is from the bulb
 
       uint8_t packetBuffer [250];
       uint16_t length = udp.read (packetBuffer, sizeof(packetBuffer));
       if (length > 0)
       {
-        Serial.println ("Data received from bulb");
+        Serial.println ("Data received from bulb "); // + length);
         // Now decrypt it
+
+        DecryptMessage ((uint8_t *) &packetBuffer, length);
+        Serial.println((char *)packetBuffer);
       }
     }
   }
@@ -134,8 +139,11 @@ void ConnectWifi()
   
   PrintWifiStatus ();
 
-  SendCommand (offCommand);
+  Serial.println ("udp Listen " + udp.begin (9999));
 
+  SendCommand (onCommand);
+  SendCommand (onCommand);
+    
 }//end connect
 
 
@@ -169,6 +177,9 @@ void SendCommand (const char * command [])
 
 }
 
+/**
+ * Encrypt the message using the TPLink protocol. Encryption is performed in place.
+ */
 void EncryptMessage (uint8_t * message)
 {
   uint8_t qkey = 0xAB;
@@ -181,6 +192,20 @@ void EncryptMessage (uint8_t * message)
     *message = a;      // Stick it back in the array
     message++;
   }
+}
+
+void DecryptMessage (uint8_t * message, uint16_t numBytes)
+{
+  uint8_t qkey = 0xAB;
+
+    for (uint16_t index = 0; index < numBytes; index++)
+    {
+      uint8_t a = *message ^ qkey;
+      qkey = *message;
+  
+      *message = a;      // Stick it back in the array
+      message++;      
+    }
 }
 
 void PrintWifiStatus()

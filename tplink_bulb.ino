@@ -14,6 +14,11 @@ const char * offCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"
 
 WiFiUDP udp;
 
+IPAddress ip(192, 168, 1, 46); // where xx is the desired IP Address
+IPAddress gateway(192, 168, 1, 1); // set gateway to match your network
+
+IPAddress subnet(255, 255, 255, 0); // set subnet mask to match your network
+
 void setup() 
 {
 
@@ -85,6 +90,8 @@ void ConnectWifi()
   WiFi.mode(WIFI_STA);
   Serial.print("Connecting to " + *MY_SSID);
 
+  WiFi.config(ip, gateway, subnet);
+  
   WiFi.begin(MY_SSID, MY_PWD);
   while (WiFi.status() != WL_CONNECTED)
   {

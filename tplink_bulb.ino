@@ -19,12 +19,21 @@ IPAddress gateway(192, 168, 1, 1); // set gateway to match your network
 
 IPAddress subnet(255, 255, 255, 0); // set subnet mask to match your network
 
+bool lampState = false;
+
+#define SW_INPUT    5
+
 void setup() 
 {
 
   // put your setup code here, to run once:
+  pinMode(SW_INPUT, INPUT_PULLUP);                   // Switch input
+  
   Serial.begin (115200);
   ConnectWifi();
+
+  // Always turn off on startup, so we know the state variable is correct
+  SendCommand (offCommand);
 }
 
 void(* resetFunc) (void) = 0;//declare reset function at address 0
@@ -76,6 +85,22 @@ void loop()
         
       default:
         break;
+    }
+  }
+
+  if (digitalRead (SW_INPUT == 0))
+  {
+    // Toggle the state
+
+    lampState = !lampState;
+
+    if (lampState == true)
+    {
+      SendCommand (onCommand);
+    }
+    else
+    {
+      SendCommand (offCommand);
     }
   }
 }

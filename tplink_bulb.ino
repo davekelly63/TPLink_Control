@@ -55,25 +55,31 @@ void loop()
   uint16_t packetSize = udp.parsePacket();
 
   packetSize = udp.available ();
-  
+
   if (packetSize > 0)
   {
-    Serial.println ("Data available from " + udp.remotePort());
-    
     if (udp.remotePort() == 9999)
     {
-      Serial.println ("Data available. Bang");
+      //Serial.println ("Data available");
       // it is from the bulb
 
-      uint8_t packetBuffer [250];
+      char packetBuffer [250];
       uint16_t length = udp.read (packetBuffer, sizeof(packetBuffer));
+
       if (length > 0)
       {
-        Serial.println ("Data received from bulb "); // + length);
+        //Serial.print(length);
+        //Serial.println (" bytes of data received from bulb");
         // Now decrypt it
 
         DecryptMessage ((uint8_t *) &packetBuffer, length);
         Serial.println((char *)packetBuffer);
+
+        String msg = String(packetBuffer);
+
+        ParseReply (msg);
+
+        haveReply = true;
       }
     }
   }
@@ -100,7 +106,7 @@ void loop()
       case 'r':
         resetFunc ();
         break;
-        
+
       default:
         break;
     }
@@ -108,29 +114,36 @@ void loop()
 
   if (digitalRead (SW_INPUT) == 1)
   {
-    // Toggle the state
-
-    lampState = !lampState;
-
-    if (lampState == true)
+    if (awaitingReply == false)
     {
-      SendCommand (onCommand);
+      haveReply = false;
+      SendCommand (stateCommand);
+      awaitingReply = true;
     }
     else
     {
-      SendCommand (offCommand);
+      if (haveReply == true)
+      {
+        // We have the reply, it's already been parsed
+      }
     }
 
-    // Now wait until the user lets go, to prevent constant toggling
+        // Toggle the state
 
-    delay (50);
-    
-    while (digitalRead (SW_INPUT) == 1)
-    {
-      delay (10);  
-    }
+        ToggleLamp ();
 
-    delay (100);
+        // Now wait until the user lets go, to prevent constant toggling
+
+        delay (50);
+
+        while (digitalRead (SW_INPUT) == 1)
+        {
+          delay (10);
+        }
+
+        delay (100);
+//      }
+//    }
   }
 }
 

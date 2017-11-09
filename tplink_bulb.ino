@@ -199,6 +199,24 @@ void SendCommand (const char * command [])
 
 }
 
+
+/**
+Read the state of the lamp, and togggle it
+*/
+void ToggleLamp (void)
+{
+  lampState = !lampState;
+
+  if (lampState == true)
+  {
+    SendCommand (onCommand);
+  }
+  else
+  {
+    SendCommand (offCommand);
+  }
+}
+
 /**
  * Encrypt the message using the TPLink protocol. Encryption is performed in place.
  */

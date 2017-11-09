@@ -22,30 +22,32 @@ IPAddress gateway(192, 168, 1, 1); // set gateway to match your network
 IPAddress subnet(255, 255, 255, 0); // set subnet mask to match your network
 
 bool lampState = false;
+bool haveReply = false;
+bool awaitingReply = false;
 
 #define SW_INPUT    5
 #define LED         13          // Connected to D7
 
-void setup() 
+void setup()
 {
 
   // put your setup code here, to run once:
   pinMode (SW_INPUT, INPUT);                   // Switch input
-  
+
   Serial.begin (115200);
   ConnectWifi();
 
   delay(100);
 
   Serial.println("Started");
-  
+
   // Always turn off on startup, so we know the state variable is correct
   //SendCommand (onCommand);
 }
 
 void(* resetFunc) (void) = 0;//declare reset function at address 0
 
-void loop() 
+void loop()
 {
   // put your main code here, to run repeatedly:
 
@@ -136,14 +138,14 @@ void loop()
 void ConnectWifi()
 {
   uint32_t startTime = millis ();
-  
+
   Serial.println();
   Serial.println("Set to STA mode");
   WiFi.mode(WIFI_STA);
   Serial.print("Connecting to " + *MY_SSID);
 
   WiFi.config(ip, gateway, subnet);
-  
+
   WiFi.begin(MY_SSID, MY_PWD);
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -158,14 +160,14 @@ void ConnectWifi()
   Serial.print ("Time to connect to network ");
   Serial.print ((millis() - startTime), DEC);
   Serial.println (" ms");
-  
+
   PrintWifiStatus ();
 
   Serial.println ("udp Listen " + udp.begin (9999));
 
   SendCommand (onCommand);
   SendCommand (onCommand);
-    
+
 }//end connect
 
 

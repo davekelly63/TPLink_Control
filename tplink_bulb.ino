@@ -250,3 +250,31 @@ void PrintWifiStatus()
   Serial.println(" dBm");
 }
 
+
+int16_t FindText(String substr, String mainStr)
+{
+  //return 0;
+
+  //Serial.print ("Searching " + mainStr);
+  //Serial.println (" for " + substr);
+
+  //int len = strlen (substr.c_str());
+
+  //Serial.println ();
+
+  //Serial.println ("Main str length " + mainStr.length());
+
+  int16_t foundpos = -1;
+
+  for (int i = 0; i <= mainStr.length () - substr.length (); i++)
+  {
+    if (mainStr.substring (i, substr.length() + i) == substr)
+    {
+      foundpos = i;
+    }
+  }
+
+  //Serial.println (foundpos);
+
+  return foundpos;
+}

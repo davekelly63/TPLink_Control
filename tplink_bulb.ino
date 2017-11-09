@@ -220,14 +220,47 @@ void DecryptMessage (uint8_t * message, uint16_t numBytes)
 {
   uint8_t qkey = 0xAB;
 
-    for (uint16_t index = 0; index < numBytes; index++)
+  for (uint16_t index = 0; index < numBytes; index++)
+  {
+    uint8_t a = *message ^ qkey;
+    qkey = *message;
+
+    *message = a;      // Stick it back in the array
+    message++;
+  }
+
+  *message = '\0';
+
+}
+
+void ParseReply (String message)
+{
+  // Have the decruypted message, parse it to get the state
+  // Don't care about anything else for now
+
+  //Serial.print ("Parsing: ");
+  //Serial.println (message);
+
+  int16_t findIndex = FindText ("on_off", message);
+
+  if (findIndex > 0)
+  {
+    //Serial.print ("Find index ");
+    //Serial.print (findIndex);  // message [index + 3])
+    //Serial.print (" character ");
+    //Serial.println (message [findIndex + 8]);
+
+    if (message [findIndex + 8] == '0')
     {
-      uint8_t a = *message ^ qkey;
-      qkey = *message;
-  
-      *message = a;      // Stick it back in the array
-      message++;      
+      lampState = false;
     }
+    else
+    {
+      lampState = true;
+    }
+
+    //Serial.println (lampState);
+  }
 }
 
 void PrintWifiStatus()

@@ -60,7 +60,7 @@ void loop()
   {
     if (udp.remotePort() == 9999)
     {
-      //Serial.println ("Data available");
+      Serial.println ("Data available");
       // it is from the bulb
 
       char packetBuffer [250];

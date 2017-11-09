@@ -24,12 +24,13 @@ IPAddress subnet(255, 255, 255, 0); // set subnet mask to match your network
 bool lampState = false;
 
 #define SW_INPUT    5
+#define LED         13          // Connected to D7
 
 void setup() 
 {
 
   // put your setup code here, to run once:
-  pinMode(SW_INPUT, INPUT_PULLUP);                   // Switch input
+  pinMode (SW_INPUT, INPUT);                   // Switch input
   
   Serial.begin (115200);
   ConnectWifi();
@@ -103,7 +104,7 @@ void loop()
     }
   }
 
-  /*if (digitalRead (SW_INPUT == 0))
+  if (digitalRead (SW_INPUT) == 1)
   {
     // Toggle the state
 
@@ -117,7 +118,18 @@ void loop()
     {
       SendCommand (offCommand);
     }
-  }*/
+
+    // Now wait until the user lets go, to prevent constant toggling
+
+    delay (50);
+    
+    while (digitalRead (SW_INPUT) == 1)
+    {
+      delay (10);  
+    }
+
+    delay (100);
+  }
 }
 
 

@@ -11,7 +11,7 @@ const char* MY_PWD =  "parsimonious";
 //const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0, \"brightness\": 25}}}"};
 const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0}}}"};
 const char * offCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 0, \"transition_period\": 0}}}"};
-//const char * detailsCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\":{\"get_light_details\":{}}}"};
+const char * detailsCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\":{\"get_light_details\":{}}}"};
 const char * stateCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\":{\"get_light_state\":{}}}"};
 
 WiFiUDP udp;

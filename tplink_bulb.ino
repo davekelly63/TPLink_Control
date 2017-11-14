@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include <Ticker.h>
+
 
 // WEB Information
 const char* MY_SSID = "TALKTALK531F4C";
@@ -21,11 +23,18 @@ IPAddress gateway(192, 168, 1, 1); // set gateway to match your network
 
 IPAddress subnet(255, 255, 255, 0); // set subnet mask to match your network
 
+Ticker ticker;
+
 bool lampState = false;
 bool haveReply = false;
 bool awaitingReply = false;
 
+uint32_t counter = 0;
+
+uint8_t timer = 0;
+
 #define SW_INPUT    5
+#define TEST_PIN    4
 #define LED         13          // Connected to D7
 
 void setup()
@@ -33,6 +42,7 @@ void setup()
 
   // put your setup code here, to run once:
   pinMode (SW_INPUT, INPUT);                   // Switch input
+  pinMode (TEST_PIN, OUTPUT);
 
   Serial.begin (115200);
   ConnectWifi();
@@ -41,11 +51,14 @@ void setup()
 
   Serial.println("Started");
 
+  ticker.attach(0.5, tick);
+
   // Always turn off on startup, so we know the state variable is correct
   //SendCommand (onCommand);
 }
 
 void(* resetFunc) (void) = 0;//declare reset function at address 0
+
 
 void loop()
 {
@@ -77,9 +90,18 @@ void loop()
 
         String msg = String(packetBuffer);
 
+        digitalWrite(TEST_PIN, 1);
+        delay(10);
+        digitalWrite(TEST_PIN, 0);
+
         ParseReply (msg);
 
         haveReply = true;
+
+        digitalWrite(TEST_PIN, 1);
+        delay(20);
+        digitalWrite(TEST_PIN, 0);
+
       }
     }
   }
@@ -112,39 +134,62 @@ void loop()
     }
   }
 
-  if (digitalRead (SW_INPUT) == 1)
+  if ((digitalRead (SW_INPUT) == 1))// || (timer == 10))
   {
+    Serial.println ("Switch active");
     if (awaitingReply == false)
     {
       haveReply = false;
+      digitalWrite(TEST_PIN, 1);
+      delay(50);
+      digitalWrite(TEST_PIN, 0);
       SendCommand (stateCommand);
       awaitingReply = true;
     }
     else
     {
+      digitalWrite(TEST_PIN, 1);
+      delay(1);
+      digitalWrite(TEST_PIN, 0);
+
       if (haveReply == true)
       {
         // We have the reply, it's already been parsed
-      }
-    }
 
         // Toggle the state
+
+        digitalWrite(TEST_PIN, 1);
+        delay(30);
+        digitalWrite(TEST_PIN, 0);
 
         ToggleLamp ();
 
         // Now wait until the user lets go, to prevent constant toggling
 
-        delay (50);
+        delay (100);
 
         while (digitalRead (SW_INPUT) == 1)
         {
           delay (10);
         }
 
+        Serial.println ("Let go of switch");
+
         delay (100);
-//      }
-//    }
+
+        haveReply = false;
+        awaitingReply = false;
+      }
+    }
   }
+
+  counter++;
+
+}
+
+void tick()
+{
+  timer++;
 }
 
 
@@ -178,7 +223,6 @@ void ConnectWifi()
 
   Serial.println ("udp Listen " + udp.begin (9999));
 
-  SendCommand (onCommand);
   SendCommand (onCommand);
 
 }//end connect
@@ -221,6 +265,12 @@ Read the state of the lamp, and togggle it
 void ToggleLamp (void)
 {
   lampState = !lampState;
+
+  digitalWrite(TEST_PIN, 1);
+  delay(60);
+  digitalWrite(TEST_PIN, 0);
+
+  Serial.println ("Set lamp to " + String (lampState));
 
   if (lampState == true)
   {
@@ -292,7 +342,7 @@ void ParseReply (String message)
       lampState = true;
     }
 
-    //Serial.println (lampState);
+    Serial.println ("Read lamp state " + String(lampState));
   }
 }
 

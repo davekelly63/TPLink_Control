@@ -22,9 +22,6 @@ bool lampState = false;
 bool haveReply = false;
 bool awaitingReply = false;
 
-uint32_t counter = 0;
-
-uint8_t timer = 0;
 
 #define SW_INPUT    5
 #define TEST_PIN    4
@@ -34,8 +31,9 @@ void setup()
 {
   pinMode (SW_INPUT, INPUT);                   // Switch input
   pinMode (TEST_PIN, OUTPUT);
+  pinMode (LED, OUTPUT);
 
-  ticker.attach(0.1, tick);
+  ticker.attach(0.3, tick);
 
   Serial.begin (115200);
 
@@ -63,6 +61,8 @@ void setup()
   Serial.println("Started");
 
   ticker.detach();
+
+  digitalWrite (LED, 0);
 }
 
 void ConfigModeCallback(WiFiManager *myWiFiManager)
@@ -167,9 +167,6 @@ void loop()
       }
     }
   }
-
-  counter++;
-
 }
 
 /**
@@ -177,7 +174,10 @@ void loop()
  * */
 void tick()
 {
-  digitalWrite(LED, !digitalRead(LED));
+  static bool ledState = false;
+  ledState = !ledState;
+
+  digitalWrite(LED, ledState);
 }
 
 

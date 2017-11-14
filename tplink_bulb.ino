@@ -103,18 +103,9 @@ void loop()
 
         String msg = String(packetBuffer);
 
-        digitalWrite(TEST_PIN, 1);
-        delay(10);
-        digitalWrite(TEST_PIN, 0);
-
         ParseReply (msg);
 
         haveReply = true;
-
-        digitalWrite(TEST_PIN, 1);
-        delay(20);
-        digitalWrite(TEST_PIN, 0);
-
       }
     }
   }

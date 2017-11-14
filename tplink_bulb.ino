@@ -145,31 +145,18 @@ void loop()
 
   if (digitalRead (SW_INPUT) == 1)
   {
-    Serial.println ("Switch active");
     if (awaitingReply == false)
     {
       haveReply = false;
-      digitalWrite(TEST_PIN, 1);
-      delay(50);
-      digitalWrite(TEST_PIN, 0);
       SendCommand (stateCommand);
       awaitingReply = true;
     }
     else
     {
-      digitalWrite(TEST_PIN, 1);
-      delay(1);
-      digitalWrite(TEST_PIN, 0);
-
       if (haveReply == true)
       {
         // We have the reply, it's already been parsed
-
         // Toggle the state
-
-        digitalWrite(TEST_PIN, 1);
-        delay(30);
-        digitalWrite(TEST_PIN, 0);
 
         ToggleLamp ();
 
@@ -181,8 +168,6 @@ void loop()
         {
           delay (10);
         }
-
-        Serial.println ("Let go of switch");
 
         delay (100);
 

@@ -26,3 +26,9 @@ To simplify operation, the bulb has a static address set in the router. Future e
 When the switch is pressed, the command to get the light status is sent out.
 
 The bulb replies in typically 200ms with its current state. The NodeMCU can then send a command to turn the light on or off correspondingly.
+
+References
+
+Some commands were extracted from https://github.com/konsumer/tplink-lightbulb project, and sniffing.
+
+Some commands were simply guesses until it worked (status)

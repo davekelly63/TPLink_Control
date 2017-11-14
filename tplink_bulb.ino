@@ -4,24 +4,17 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 #include <Ticker.h>
+#include <WiFiManager.h>
 
+const String AP_NAME = "TPLink Switch AP";
 
-// WEB Information
-const char* MY_SSID = "TALKTALK531F4C";
-const char* MY_PWD =  "parsimonious";
-
-//const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0, \"brightness\": 25}}}"};
+//const char * brightnessCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0, \"brightness\": 25}}}"};
 const char * onCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 1, \"transition_period\": 0}}}"};
 const char * offCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\": {\"transition_light_state\": {\"ignore_default\": 1, \"on_off\": 0, \"transition_period\": 0}}}"};
 const char * detailsCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\":{\"get_light_details\":{}}}"};
 const char * stateCommand [] = {"{\"smartlife.iot.smartbulb.lightingservice\":{\"get_light_state\":{}}}"};
 
 WiFiUDP udp;
-
-IPAddress ip(192, 168, 1, 46); // where xx is the desired IP Address
-IPAddress gateway(192, 168, 1, 1); // set gateway to match your network
-
-IPAddress subnet(255, 255, 255, 0); // set subnet mask to match your network
 
 Ticker ticker;
 
@@ -39,26 +32,44 @@ uint8_t timer = 0;
 
 void setup()
 {
-
-  // put your setup code here, to run once:
   pinMode (SW_INPUT, INPUT);                   // Switch input
   pinMode (TEST_PIN, OUTPUT);
 
   Serial.begin (115200);
-  ConnectWifi();
+
+  WiFiManager wifiManager;
+
+  wifiManager.setAPCallback(ConfigModeCallback);
+
+  if (digitalRead(SW_INPUT) == 0)
+  {
+    //first parameter is name of access point, second is the password
+    wifiManager.autoConnect(AP_NAME.c_str()); // No password
+  }
+  else
+  {
+    // Switch is held down, show the Access Point page
+    wifiManager.startConfigPortal(AP_NAME.c_str());
+  }
 
   delay(100);
+
+  PrintWifiStatus();
+
+  Serial.println("udp Listen " + udp.begin(9999));
 
   Serial.println("Started");
 
   ticker.attach(0.5, tick);
-
-  // Always turn off on startup, so we know the state variable is correct
-  //SendCommand (onCommand);
 }
 
-void(* resetFunc) (void) = 0;//declare reset function at address 0
+void ConfigModeCallback(WiFiManager *myWiFiManager)
+{
+  Serial.println("Entered config mode");
+  Serial.println(WiFi.softAPIP());
 
+  Serial.println(myWiFiManager->getConfigPortalSSID());
+}
 
 void loop()
 {
@@ -125,16 +136,12 @@ void loop()
         SendCommand (stateCommand);
         break;
 
-      case 'r':
-        resetFunc ();
-        break;
-
-      default:
+        default:
         break;
     }
   }
 
-  if ((digitalRead (SW_INPUT) == 1))// || (timer == 10))
+  if (digitalRead (SW_INPUT) == 1)
   {
     Serial.println ("Switch active");
     if (awaitingReply == false)
@@ -191,41 +198,6 @@ void tick()
 {
   timer++;
 }
-
-
-void ConnectWifi()
-{
-  uint32_t startTime = millis ();
-
-  Serial.println();
-  Serial.println("Set to STA mode");
-  WiFi.mode(WIFI_STA);
-  Serial.print("Connecting to " + *MY_SSID);
-
-  WiFi.config(ip, gateway, subnet);
-
-  WiFi.begin(MY_SSID, MY_PWD);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(100);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.print("Connected ");
-  Serial.println("");
-
-  Serial.print ("Time to connect to network ");
-  Serial.print ((millis() - startTime), DEC);
-  Serial.println (" ms");
-
-  PrintWifiStatus ();
-
-  Serial.println ("udp Listen " + udp.begin (9999));
-
-  SendCommand (onCommand);
-
-}//end connect
 
 
 void SendCommand (const char * command [])

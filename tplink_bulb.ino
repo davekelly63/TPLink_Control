@@ -290,18 +290,10 @@ void ParseReply (String message)
   // Have the decruypted message, parse it to get the state
   // Don't care about anything else for now
 
-  //Serial.print ("Parsing: ");
-  //Serial.println (message);
-
   int16_t findIndex = FindText ("on_off", message);
 
   if (findIndex > 0)
   {
-    //Serial.print ("Find index ");
-    //Serial.print (findIndex);  // message [index + 3])
-    //Serial.print (" character ");
-    //Serial.println (message [findIndex + 8]);
-
     if (message [findIndex + 8] == '0')
     {
       lampState = false;
@@ -338,17 +330,6 @@ void PrintWifiStatus()
 
 int16_t FindText(String substr, String mainStr)
 {
-  //return 0;
-
-  //Serial.print ("Searching " + mainStr);
-  //Serial.println (" for " + substr);
-
-  //int len = strlen (substr.c_str());
-
-  //Serial.println ();
-
-  //Serial.println ("Main str length " + mainStr.length());
-
   int16_t foundpos = -1;
 
   for (int i = 0; i <= mainStr.length () - substr.length (); i++)
@@ -358,8 +339,6 @@ int16_t FindText(String substr, String mainStr)
       foundpos = i;
     }
   }
-
-  //Serial.println (foundpos);
 
   return foundpos;
 }

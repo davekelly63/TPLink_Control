@@ -35,6 +35,8 @@ void setup()
   pinMode (SW_INPUT, INPUT);                   // Switch input
   pinMode (TEST_PIN, OUTPUT);
 
+  ticker.attach(0.1, tick);
+
   Serial.begin (115200);
 
   WiFiManager wifiManager;
@@ -60,7 +62,7 @@ void setup()
 
   Serial.println("Started");
 
-  ticker.attach(0.5, tick);
+  ticker.detach();
 }
 
 void ConfigModeCallback(WiFiManager *myWiFiManager)
@@ -194,38 +196,33 @@ void loop()
 
 }
 
+/**
+ * Toggle LED
+ * */
 void tick()
 {
-  timer++;
+  digitalWrite(LED, !digitalRead(LED));
 }
 
 
 void SendCommand (const char * command [])
 {
-  //Serial.println("Encrypting...");
   // First copy the command locally
 
   char cmdMessage [250];
 
-  //Serial.println("Reading");
-
   strcpy((char *)&cmdMessage, (const char *) * command);
   uint8_t messageLength = strlen(cmdMessage);
 
-  //Serial.println(cmdMessage);
-  //Serial.println("Length" + messageLength);
-
-  //Serial.println("Ready to encrypt");
   EncryptMessage ((uint8_t *) &cmdMessage);
 
   // Now send it over UDP
 
-  //udp.begin ();
-  udp.beginPacket("192.168.1.45", 9999);
+  udp.beginPacket("192.168.1.45", 9999);      // Bulb is using a static IP Address
   udp.write(cmdMessage);
   udp.endPacket();
 
-  // The light bulb should reply now
+  // The light bulb should reply now after approx 200ms
   // This is handled in the main loop
 
 }

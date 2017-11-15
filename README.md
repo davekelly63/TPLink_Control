@@ -21,6 +21,8 @@ The switch input is connected to GPIO.5, with a pullup resistor.
 
 When the NodeMCU powers up, it checks this switch state, and if the switch is active the AP will be shown, otherwise the NodeMCU will connect to the stored wifi.
 
+Additionally a LED is connected to GPIO.13, which flashes while the NodeMCU is in the AP mode.
+
 To simplify operation, the bulb has a static address set in the router. Future enhancement will allow a scan of the network to locate bulbs attached.
 
 When the switch is pressed, the command to get the light status is sent out.

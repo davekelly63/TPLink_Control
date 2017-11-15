@@ -12,7 +12,7 @@ So this project was created to use the NodeMCU board, and fit inside a large pus
 
 Unfortunately the connect time of the NodemMCU meant it is impractical to just power the button when required, then go back to sleep. This would be ideal and allow it to be run on batteries, but the lag for the connection is between 200ms and 5 seconds, which is unacceptable.
 
-So the device must be continuously powered. It does mean that it is responsive.
+So the device must be continuously powered, monitoring for the push switch. It does mean that it is responsive and the light is switched within 300ms.
 
 ### Operation
 WiFiManager is used to manage the connection. This library (from https://github.com/tzapu/WiFiManager) provides an AP when powered up for configuring the connection, but afterwards it will automatically connect to the stored router. If the wifi point is not available, it will automatically show the AP again.
@@ -27,8 +27,15 @@ When the switch is pressed, the command to get the light status is sent out.
 
 The bulb replies in typically 200ms with its current state. The NodeMCU can then send a command to turn the light on or off correspondingly.
 
-References
+Acknowledgements
 
-Some commands were extracted from https://github.com/konsumer/tplink-lightbulb project, and sniffing.
+Most information was gained from project https://github.com/konsumer/tplink-lightbulb. Commands were tested, and sniffed using Wireshark to obtain the basic commands.
 
 Some commands were simply guesses until it worked (status)
+
+Currently only the On, Off and Status commands are implemented.
+
+A possible future enhancement is to use the length of switch press as a brightness control, ramping up and down.
+
+
+

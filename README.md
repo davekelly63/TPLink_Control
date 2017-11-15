@@ -39,5 +39,6 @@ Currently only the On, Off and Status commands are implemented.
 
 A possible future enhancement is to use the length of switch press as a brightness control, ramping up and down.
 
+![image of switch](https://imgur.com/a/9VF48)
 
 
